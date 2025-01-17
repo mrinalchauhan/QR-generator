@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic QR Code Generator</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>QR Code Generator</h1>
+    <form id="qrForm">
+      <input type="text" id="qrText" placeholder="Enter text or URL" required>
+      <button type="submit">Generate QR Code</button>
+    </form>
+    <div id="qrResult">
+      <img id="qrImage" alt="QR Code will appear here">
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("qrForm");
+    const qrImage = document.getElementById("qrImage");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const text = document.getElementById("qrText").value;
+      try {
+        const response = await fetch("/generate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ text }),
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          qrImage.src = data.qrCode;
+        } else {
+          alert("Failed to generate QR code.");
+        }
+      } catch (error) {
+        alert("Error connecting to the server.");
+      }
+    });
+  </script>
+</body>
+</html>
